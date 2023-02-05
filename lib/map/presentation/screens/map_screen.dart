@@ -57,7 +57,7 @@ class _MapScreenState extends State<MapScreen> {
     });
   }
 
-  /// метод для показа текущей позиции
+  /// Метод для показа текущей позиции
   Future<void> _showPosition(
     YandexMapController mapController,
     double latitude,
@@ -78,7 +78,7 @@ class _MapScreenState extends State<MapScreen> {
             )),
           )
           .timeout(const Duration(seconds: 3))
-          /// показ модального окна
+          /// Показ модального окна
           .then((value) => showModalBottomSheet(
               context: _context,
               builder: (_) => Padding(
