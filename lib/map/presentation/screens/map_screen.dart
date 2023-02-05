@@ -77,6 +77,7 @@ class _MapScreenState extends State<MapScreen> {
             )),
           )
           .timeout(const Duration(seconds: 3))
+          /// показ модального окна
           .then((value) => showModalBottomSheet(
               context: _context,
               builder: (_) => Padding(
