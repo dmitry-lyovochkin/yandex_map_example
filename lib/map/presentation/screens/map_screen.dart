@@ -3,7 +3,6 @@ import 'package:yandex_map_example/map/domain/app_latitude_longitude.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 import '../../domain/location_service.dart';
-import 'home_screen.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({Key? key}) : super(key: key);
@@ -13,87 +12,78 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
+  late final YandexMapController _mapController;
+
+  @override
+  void initState() {
+    super.initState();
+    _initPermission();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Текущее местоположение'),
       ),
-      body: FutureBuilder(
-        future: _getCurrentLocation(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return YandexMap(
-              onMapCreated: (controller) {
-                _showLocation(controller, snapshot.data!, context);
-              },
-            );
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
+      body: YandexMap(
+        onMapCreated: (controller) {
+          _mapController = controller;
+          // show(context);
         },
       ),
     );
   }
 
+  /// Проверка разрешений на доступ к геопозиции пользователя
   Future<void> _initPermission() async {
     if (!await ServiceLocation().checkPermission()) {
       await ServiceLocation().requestPermission();
+      await _getCurrentLocation();
     }
   }
 
-  Future<AppLatLong> _getCurrentLocation() async {
-    await _initPermission();
-    return ServiceLocation()
-        .getCurrentLocation()
-        .then((value) => value)
-        .catchError(
-          (_) => AppLatLong(
-            lat: MoscowLocation().latMoscow,
-            long: MoscowLocation().longMoscow,
-          ),
-        );
+  /// Получение текущей геопозиции пользователя
+  Future<void> _getCurrentLocation() async {
+    await ServiceLocation().getCurrentLocation().then((position) {
+      try {
+        _showLocation(
+            _mapController,
+            AppLatLong(
+              lat: position.lat,
+              long: position.long,
+            ));
+      } on Exception catch (_) {
+        _showLocation(
+            _mapController,
+            AppLatLong(
+              lat: MoscowLocation().latMoscow,
+              long: MoscowLocation().longMoscow,
+            ));
+      }
+    });
   }
 
   /// Метод для показа текущей позиции
   Future<void> _showLocation(
     YandexMapController mapController,
     AppLatLong appLatLong,
-    BuildContext context,
   ) async {
     // Проверка, смонтирован ли виджет
     if (mounted) {
-      await mapController
-          .moveCamera(
-            animation:
-                const MapAnimation(type: MapAnimationType.linear, duration: 1),
-            CameraUpdate.newCameraPosition(CameraPosition(
-              target: Point(
-                latitude: appLatLong.lat,
-                longitude: appLatLong.long,
-              ),
-              zoom: 12,
-            )),
-          )
-
-          /// Показ модального окна
-          .then(
-            (value) => showModalBottomSheet(
-              context: context,
-              builder: (_) => Padding(
-                padding: const EdgeInsets.all(20),
-                child: ElevatedButton(
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const HomeScreen(),
-                    ),
-                  ),
-                  child: const Text('Далее'),
-                ),
-              ),
+      await mapController.moveCamera(
+        animation:
+            const MapAnimation(type: MapAnimationType.linear, duration: 1),
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: Point(
+              latitude: appLatLong.lat,
+              longitude: appLatLong.long,
             ),
-          );
+            zoom: 12,
+          ),
+        ),
+      );
     }
   }
 }
