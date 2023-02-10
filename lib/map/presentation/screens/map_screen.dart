@@ -47,31 +47,26 @@ class _MapScreenState extends State<MapScreen> {
   Future<void> _getCurrentLocation() async {
     await ServiceLocation().getCurrentLocation().then((position) {
       try {
-        _showLocation(
-            _mapController,
-            AppLatLong(
-              lat: position.lat,
-              long: position.long,
-            ));
+        _showLocation(AppLatLong(
+          lat: position.lat,
+          long: position.long,
+        ));
       } on Exception catch (_) {
-        _showLocation(
-            _mapController,
-            AppLatLong(
-              lat: MoscowLocation().latMoscow,
-              long: MoscowLocation().longMoscow,
-            ));
+        _showLocation(AppLatLong(
+          lat: MoscowLocation().latMoscow,
+          long: MoscowLocation().longMoscow,
+        ));
       }
     });
   }
 
   /// Метод для показа текущей позиции
   Future<void> _showLocation(
-    YandexMapController mapController,
     AppLatLong appLatLong,
   ) async {
     // Проверка, смонтирован ли виджет
     if (mounted) {
-      await mapController.moveCamera(
+      await _mapController.moveCamera(
         animation:
             const MapAnimation(type: MapAnimationType.linear, duration: 1),
         CameraUpdate.newCameraPosition(
