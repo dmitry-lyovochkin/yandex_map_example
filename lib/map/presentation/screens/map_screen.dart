@@ -12,7 +12,7 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  late final YandexMapController _mapController;
+  YandexMapController? _mapController;
 
   @override
   void initState() {
@@ -40,19 +40,19 @@ class _MapScreenState extends State<MapScreen> {
     if (!await LocationService().checkPermission()) {
       await LocationService().requestPermission();
     }
-      await _setCurrentLocation();
+      await _fetchCurrentLocation();
   }
 
   /// Получение текущей геопозиции пользователя
-  Future<void> _setCurrentLocation() async {
-    await LocationService().getCurrentLocation().then((position) {
+  Future<void> _fetchCurrentLocation() async {
+     LocationService().getCurrentLocation().then((position) {
       try {
-        _showLocation(AppLatLong(
+        _moveToCurrentPosition(AppLatLong(
           lat: position.lat,
           long: position.long,
         ));
       } on Exception catch (_) {
-        _showLocation(AppLatLong(
+        _moveToCurrentPosition(AppLatLong(
           lat: MoscowLocation().latMoscow,
           long: MoscowLocation().longMoscow,
         ));
@@ -61,12 +61,12 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   /// Метод для показа текущей позиции
-  Future<void> _showLocation(
+  Future<void> _moveToCurrentPosition(
     AppLatLong appLatLong,
   ) async {
-    // Проверка, смонтирован ли виджет
-    if (mounted) {
-      await _mapController.moveCamera(
+    // Проверка контроллера на работоспособность
+    if (_mapController != null) {
+      await _mapController!.moveCamera(
         animation:
             const MapAnimation(type: MapAnimationType.linear, duration: 1),
         CameraUpdate.newCameraPosition(
