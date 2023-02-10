@@ -1,15 +1,14 @@
-class AppLatitudeLongitude {
-  final double latitude;
-  final double longitude;
+class AppLatLong {
+  final double lat;
+  final double long;
 
-  const AppLatitudeLongitude({
-    required this.latitude,
-    required this.longitude,
+  const AppLatLong({
+    required this.lat,
+    required this.long,
   });
 }
 
 class MoscowLocation {
-  final double latitudeMoscow = 55.7522200;
-  final double longitudeMoscow = 37.6155600;
+  final double latMoscow = 55.7522200;
+  final double longMoscow = 37.6155600;
 }
-

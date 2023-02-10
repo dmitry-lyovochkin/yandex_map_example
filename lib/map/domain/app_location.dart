@@ -1,9 +1,9 @@
+import 'app_latitude_longitude.dart';
+
 abstract class AppLocation {
-  Future<void> getCurrentLocation();
+  Future<AppLatLong> getCurrentLocation();
 
   Future<bool> requestPermission();
 
   Future<bool> checkPermission();
 }
-
-

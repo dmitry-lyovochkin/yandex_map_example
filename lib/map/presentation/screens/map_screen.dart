@@ -20,12 +20,14 @@ class _MapScreenState extends State<MapScreen> {
         title: const Text('Текущее местоположение'),
       ),
       body: FutureBuilder(
-        future: _getCurrentPosition(),
+        future: _getCurrentLocation(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return YandexMap(onMapCreated: (controller) {
-              _showPosition(controller, snapshot.data!, context);
-            });
+            return YandexMap(
+              onMapCreated: (controller) {
+                _showLocation(controller, snapshot.data!, context);
+              },
+            );
           } else {
             return const Center(child: CircularProgressIndicator());
           }
@@ -34,31 +36,29 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  /// Проверка разрешений на доступ к геопозиции пользователя
   Future<void> _initPermission() async {
     if (!await ServiceLocation().checkPermission()) {
       await ServiceLocation().requestPermission();
     }
   }
 
-  /// Получение текущей геопозиции пользователя
-  Future<AppLatitudeLongitude> _getCurrentPosition() async {
+  Future<AppLatLong> _getCurrentLocation() async {
     await _initPermission();
     return ServiceLocation()
         .getCurrentLocation()
         .then((value) => value)
         .catchError(
-          (_) => AppLatitudeLongitude(
-            latitude: MoscowLocation().latitudeMoscow,
-            longitude: MoscowLocation().longitudeMoscow,
+          (_) => AppLatLong(
+            lat: MoscowLocation().latMoscow,
+            long: MoscowLocation().longMoscow,
           ),
         );
   }
 
   /// Метод для показа текущей позиции
-  Future<void> _showPosition(
+  Future<void> _showLocation(
     YandexMapController mapController,
-    AppLatitudeLongitude appLatitudeLongitude,
+    AppLatLong appLatLong,
     BuildContext context,
   ) async {
     // Проверка, смонтирован ли виджет
@@ -69,28 +69,31 @@ class _MapScreenState extends State<MapScreen> {
                 const MapAnimation(type: MapAnimationType.linear, duration: 1),
             CameraUpdate.newCameraPosition(CameraPosition(
               target: Point(
-                latitude: appLatitudeLongitude.latitude,
-                longitude: appLatitudeLongitude.longitude,
+                latitude: appLatLong.lat,
+                longitude: appLatLong.long,
               ),
               zoom: 12,
             )),
           )
 
           /// Показ модального окна
-          .then((value) => showModalBottomSheet(
+          .then(
+            (value) => showModalBottomSheet(
               context: context,
               builder: (_) => Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const HomeScreen(),
-                        ),
-                      ),
-                      child: const Text('Далее'),
+                padding: const EdgeInsets.all(20),
+                child: ElevatedButton(
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const HomeScreen(),
                     ),
-                  )));
+                  ),
+                  child: const Text('Далее'),
+                ),
+              ),
+            ),
+          );
     }
   }
 }

@@ -4,14 +4,12 @@ import 'package:yandex_map_example/map/domain/app_location.dart';
 
 class ServiceLocation implements AppLocation {
   @override
-  Future<AppLatitudeLongitude> getCurrentLocation() async {
+  Future<AppLatLong> getCurrentLocation() async {
     return Geolocator.getCurrentPosition().then((value) {
-      return AppLatitudeLongitude(
-          latitude: value.latitude, longitude: value.longitude);
+      return AppLatLong(lat: value.latitude, long: value.longitude);
     }).catchError(
-      (_) => AppLatitudeLongitude(
-          latitude: MoscowLocation().latitudeMoscow,
-          longitude: MoscowLocation().longitudeMoscow),
+      (_) => AppLatLong(
+          lat: MoscowLocation().latMoscow, long: MoscowLocation().longMoscow),
     );
   }
 
