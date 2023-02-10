@@ -40,11 +40,11 @@ class _MapScreenState extends State<MapScreen> {
     if (!await LocationService().checkPermission()) {
       await LocationService().requestPermission();
     }
-      await _getCurrentLocation();
+      await _setCurrentLocation();
   }
 
   /// Получение текущей геопозиции пользователя
-  Future<void> _getCurrentLocation() async {
+  Future<void> _setCurrentLocation() async {
     await LocationService().getCurrentLocation().then((position) {
       try {
         _showLocation(AppLatLong(
