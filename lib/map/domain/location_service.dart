@@ -2,7 +2,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:yandex_map_example/map/domain/app_latitude_longitude.dart';
 import 'package:yandex_map_example/map/domain/app_location.dart';
 
-class ServiceLocation implements AppLocation {
+class LocationService implements AppLocation {
   @override
   Future<AppLatLong> getCurrentLocation() async {
     return Geolocator.getCurrentPosition().then((value) {

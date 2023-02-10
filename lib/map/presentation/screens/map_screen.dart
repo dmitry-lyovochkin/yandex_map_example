@@ -37,15 +37,15 @@ class _MapScreenState extends State<MapScreen> {
 
   /// Проверка разрешений на доступ к геопозиции пользователя
   Future<void> _initPermission() async {
-    if (!await ServiceLocation().checkPermission()) {
-      await ServiceLocation().requestPermission();
+    if (!await LocationService().checkPermission()) {
+      await LocationService().requestPermission();
       await _getCurrentLocation();
     }
   }
 
   /// Получение текущей геопозиции пользователя
   Future<void> _getCurrentLocation() async {
-    await ServiceLocation().getCurrentLocation().then((position) {
+    await LocationService().getCurrentLocation().then((position) {
       try {
         _showLocation(AppLatLong(
           lat: position.lat,
