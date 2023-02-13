@@ -1,5 +1,5 @@
 import 'package:geolocator/geolocator.dart';
-import 'package:yandex_map_example/map/domain/app_latitude_longitude.dart';
+import 'package:yandex_map_example/map/domain/app_lat_long.dart';
 import 'package:yandex_map_example/map/domain/app_location.dart';
 
 class LocationService implements AppLocation {

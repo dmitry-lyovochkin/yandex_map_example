@@ -1,4 +1,4 @@
-import 'app_latitude_longitude.dart';
+import 'app_lat_long.dart';
 
 abstract class AppLocation {
   Future<AppLatLong> getCurrentLocation();
