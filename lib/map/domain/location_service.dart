@@ -3,13 +3,14 @@ import 'package:yandex_map_example/map/domain/app_latitude_longitude.dart';
 import 'package:yandex_map_example/map/domain/app_location.dart';
 
 class LocationService implements AppLocation {
+  final moscowLocation = const MoscowLocation();
+
   @override
   Future<AppLatLong> getCurrentLocation() async {
     return Geolocator.getCurrentPosition().then((value) {
       return AppLatLong(lat: value.latitude, long: value.longitude);
     }).catchError(
-      (_) => AppLatLong(
-          lat: MoscowLocation().latMoscow, long: MoscowLocation().longMoscow),
+      (_) => AppLatLong(lat: moscowLocation.lat, long: moscowLocation.long),
     );
   }
 

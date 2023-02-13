@@ -8,7 +8,9 @@ class AppLatLong {
   });
 }
 
-class MoscowLocation {
-  final double latMoscow = 55.7522200;
-  final double longMoscow = 37.6155600;
+class MoscowLocation extends AppLatLong {
+  const MoscowLocation({
+    super.lat = 55.7522200,
+    super.long = 37.6155600,
+  });
 }
