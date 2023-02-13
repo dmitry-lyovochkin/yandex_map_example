@@ -47,14 +47,11 @@ class _MapScreenState extends State<MapScreen> {
   /// Получение текущей геопозиции пользователя
   Future<void> _fetchCurrentLocation() async {
     AppLatLong location;
-    const moscowLocation = MoscowLocation();
+    const defLocation = MoscowLocation();
     try {
       location = await LocationService().getCurrentLocation();
     } catch (_) {
-      location = AppLatLong(
-        lat: moscowLocation.lat,
-        long: moscowLocation.long,
-      );
+      location = defLocation;
     }
     _moveToCurrentLocation(location);
   }
